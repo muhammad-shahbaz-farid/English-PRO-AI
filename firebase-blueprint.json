@@ -1,0 +1,99 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with language learning settings, progress, streaks, and statistics.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Unique user ID from Firebase Auth",
+          "maxLength": 128
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the user",
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address",
+          "maxLength": 150
+        },
+        "nativeLanguage": {
+          "type": "string",
+          "description": "Native language of the user (e.g. Urdu)",
+          "maxLength": 50
+        },
+        "englishLevel": {
+          "type": "string",
+          "description": "CEFR proficiency level (A1-C2)",
+          "maxLength": 10
+        },
+        "learningGoal": {
+          "type": "string",
+          "description": "Primary learning goal",
+          "maxLength": 100
+        },
+        "dailyPracticeGoal": {
+          "type": "number",
+          "description": "Daily practice goal in minutes"
+        },
+        "totalXp": {
+          "type": "number",
+          "description": "Total experience points earned"
+        },
+        "streakDays": {
+          "type": "number",
+          "description": "Consecutive days practice streak"
+        },
+        "lastActiveDate": {
+          "type": "string",
+          "description": "ISO date of last practice activity",
+          "maxLength": 50
+        },
+        "wordsMasteredCount": {
+          "type": "number",
+          "description": "Count of vocabulary words mastered"
+        },
+        "conversationsCount": {
+          "type": "number",
+          "description": "Total conversations completed"
+        },
+        "grammarChecksCount": {
+          "type": "number",
+          "description": "Total grammar checks conducted"
+        },
+        "translationsCount": {
+          "type": "number",
+          "description": "Total translations performed"
+        },
+        "practiceMinutes": {
+          "type": "number",
+          "description": "Total practice minutes accumulated"
+        },
+        "challengesCompletedCount": {
+          "type": "number",
+          "description": "Daily challenges finished"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Account creation timestamp",
+          "maxLength": 50
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last update timestamp",
+          "maxLength": 50
+        }
+      },
+      "required": ["uid", "name", "email", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Private profile document for each user. Read and written only by the authenticated owner."
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "EnglishPro AI",
+  "description": "Practice English. Build Confidence. Speak Better. Modern AI-powered English learning platform featuring conversation practice, grammar correction, vocabulary builder, Urdu-English translation, and daily challenges.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

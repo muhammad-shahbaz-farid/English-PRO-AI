@@ -1,0 +1,66 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Default Deny Catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Common security helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidUserProfile(data) {
+      return data.uid is string && data.uid.size() <= 128 && data.uid == request.auth.uid
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.email is string && data.email.size() > 0 && data.email.size() <= 150
+        && (!('nativeLanguage' in data) || (data.nativeLanguage is string && data.nativeLanguage.size() <= 50))
+        && (!('englishLevel' in data) || (data.englishLevel is string && data.englishLevel.size() <= 10))
+        && (!('learningGoal' in data) || (data.learningGoal is string && data.learningGoal.size() <= 100))
+        && (!('dailyPracticeGoal' in data) || (data.dailyPracticeGoal is number))
+        && (!('totalXp' in data) || (data.totalXp is number))
+        && (!('streakDays' in data) || (data.streakDays is number))
+        && (!('lastActiveDate' in data) || (data.lastActiveDate is string && data.lastActiveDate.size() <= 50))
+        && (!('wordsMasteredCount' in data) || (data.wordsMasteredCount is number))
+        && (!('conversationsCount' in data) || (data.conversationsCount is number))
+        && (!('grammarChecksCount' in data) || (data.grammarChecksCount is number))
+        && (!('translationsCount' in data) || (data.translationsCount is number))
+        && (!('practiceMinutes' in data) || (data.practiceMinutes is number))
+        && (!('challengesCompletedCount' in data) || (data.challengesCompletedCount is number))
+        && (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 50))
+        && (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 50));
+    }
+
+    // User profile document: strictly isolated to the authenticated owner
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow list: if false; // Blanket user listing forbidden
+      allow create: if isOwner(userId) && isValidId(userId)
+        && isValidUserProfile(incoming())
+        && incoming().uid == userId;
+      allow update: if isOwner(userId) && isValidId(userId)
+        && isValidUserProfile(incoming())
+        && incoming().uid == existing().uid
+        && incoming().email == existing().email;
+      allow delete: if isOwner(userId) && isValidId(userId);
+    }
+  }
+}
